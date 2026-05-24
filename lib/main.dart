@@ -1,158 +1,140 @@
 import 'package:flutter/material.dart';
-import 'package:start_up_project/widgets/Todo-Card.dart';
-import 'package:start_up_project/widgets/counter.dart';
+import 'package:start_up_project/pages/cards.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const Qoutes());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class Qoutes extends StatefulWidget {
+  const Qoutes({Key? key}) : super(key: key);
+
+  @override
+  State<Qoutes> createState() => _QoutesState();
+}
+
+class Quote {
+  String title;
+  String author;
+  Quote({required this.title, required this.author});
+}
+
+class _QoutesState extends State<Qoutes> {
+  List<Quote> allQoutes = [
+    Quote(
+      title: "Be yourself; everyone else is already taken.",
+      author: "Oscar Wilde",
+    ),
+    Quote(
+      title:
+          "Two things are infinite: the universe and human stupidity; and I'm not sure about the universe.",
+      author: "Albert Einstein",
+    ),
+  ];
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController authorController = TextEditingController();
+
+  addingText() {
+    setState(() {
+      allQoutes.add(
+        Quote(title: titleController.text, author: authorController.text),
+      );
+    });
+    titleController.clear();
+    authorController.clear();
+  }
+
+  delete(Quote item) {
+    setState(() {
+      allQoutes.remove(item);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light(useMaterial3: true),
-      home: TodoApp(),
-    );
-  }
-}
-
-class TodoApp extends StatefulWidget {
-  const TodoApp({Key? key}) : super(key: key);
-
-  @override
-  State<TodoApp> createState() => _TodoAppState();
-}
-
-class Task {
-  String title;
-  bool status;
-  Task({required this.title, required this.status});
-}
-
-List alltasks = [];
-
-class _TodoAppState extends State<TodoApp> {
-  addnewtask() {
-    setState(() {
-      alltasks.add(Task(title: mycontroler.text, status: false));
-    });
-  }
-
-  changeStatus(int taskIndex) {
-    setState(() {
-      alltasks[taskIndex].status = !alltasks[taskIndex].status;
-    });
-  }
-
-  delete(int taskIndex) {
-    setState(() {
-      alltasks.remove(alltasks[taskIndex]);
-    });
-  }
-
-  final mycontroler = TextEditingController();
-
-  int calucatingcounts() {
-    int completedtasks = 0;
-
-    alltasks.forEach((item) {
-      if (item.status) {
-        completedtasks++;
-      }
-    });
-
-    return completedtasks;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            builder: (BuildContext context) {
-              return Container(
-                padding: EdgeInsets.all(22),
-                height: 200,
-                color: Colors.white,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextField(
-                      controller: mycontroler,
-                      maxLength: 40,
-                      decoration: InputDecoration(labelText: "Add New Task"),
-                    ),
-                    SizedBox(height: 20),
-                    TextButton(
-                      onPressed: () {
-                        addnewtask();
-                        Navigator.pop(context);
-                      },
-                      child: Text("Add Task"),
-                    ),
-                  ],
-                ),
-              );
-            },
-            isScrollControlled: true,
-          );
-        },
-
-        backgroundColor: Colors.red,
-        child: Icon(Icons.add),
-      ),
-      backgroundColor: Color.fromRGBO(58, 66, 86, 0.7),
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.delete_forever, color: Colors.red, size: 35),
-          onPressed: () {
-            setState(() {
-              alltasks.clear();
-            });
-          },
-        ),
-        backgroundColor: Colors.grey[900],
-        elevation: 0,
-        title: Text(
-          "To Do App",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontFamily: "Bassem",
+      home: Scaffold(
+        backgroundColor: Colors.grey[600],
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          title: const Text(
+            "Qoutes",
+            style: TextStyle(color: Colors.blue, fontFamily: "Bassem"),
           ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: SizedBox(
-        width: double.infinity,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-
+        body: Column(
           children: [
-            Counters(alltodos: alltasks.length, alldone: calucatingcounts()),
-            Container(
-              margin: EdgeInsets.only(top: 22),
-              height: 500,
-              width: double.infinity,
-              color: const Color.fromARGB(255, 73, 70, 97),
-              child: ListView.builder(
-                itemCount: alltasks.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Todocard(
-                    vartitle: alltasks[index].title,
-                    doneORnot: alltasks[index].status,
-                    changeStatus: () => changeStatus(index),
-                    delete: () => delete(index),
-                  );
+            ...allQoutes.map(
+              (item) => CardWidget(
+                item: item,
+                title: item.title,
+                author: item.author,
+                delete: (qouteToWithdrawn) {
+                  setState(() {
+                    allQoutes.remove(item);
+                  });
                 },
               ),
             ),
           ],
+        ),
+        floatingActionButton: Builder(
+          builder: (BuildContext contextOfButton) {
+            return FloatingActionButton(
+              onPressed: () {
+                showDialog(
+                  context: contextOfButton,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text("Add Quote"),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextField(
+                            controller: titleController,
+                            decoration: const InputDecoration(
+                              hintText: "Quote",
+                            ),
+                          ),
+                          TextField(
+                            controller: authorController,
+                            decoration: const InputDecoration(
+                              hintText: "Author",
+                            ),
+                          ),
+                        ],
+                      ),
+                      actions: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                addingText();
+                                Navigator.pop(context);
+                              },
+                              child: const Text("Add"),
+                            ),
+
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text("Cancel"),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              backgroundColor: Colors.black,
+              child: const Icon(Icons.add, color: Colors.blue),
+            );
+          },
         ),
       ),
     );
