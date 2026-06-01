@@ -1,3 +1,4 @@
+import 'dart:async' as async;
 import 'package:flutter/material.dart';
 
 void main() {
@@ -73,7 +74,9 @@ class _TimerState extends State<Timer> {
   @override
   void initState() {
     super.initState();
-    _dateFunctions();
+    async.Timer.periodic(const Duration(seconds: 1), (async.Timer timer) {
+      _dateFunctions();
+    });
   }
 
   @override
