@@ -1,140 +1,110 @@
 import 'package:flutter/material.dart';
-import 'package:start_up_project/pages/cards.dart';
 
 void main() {
-  runApp(const Qoutes());
+  runApp(const Timer());
 }
 
-class Qoutes extends StatefulWidget {
-  const Qoutes({Key? key}) : super(key: key);
+class Timer extends StatefulWidget {
+  const Timer({super.key});
 
   @override
-  State<Qoutes> createState() => _QoutesState();
+  State<Timer> createState() => _TimerState();
 }
 
-class Quote {
-  String title;
-  String author;
-  Quote({required this.title, required this.author});
-}
+class _TimerState extends State<Timer> {
+  String Today = "";
 
-class _QoutesState extends State<Qoutes> {
-  List<Quote> allQoutes = [
-    Quote(
-      title: "Be yourself; everyone else is already taken.",
-      author: "Oscar Wilde",
-    ),
-    Quote(
-      title:
-          "Two things are infinite: the universe and human stupidity; and I'm not sure about the universe.",
-      author: "Albert Einstein",
-    ),
-  ];
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController authorController = TextEditingController();
+  String hour = "";
+  String minute = "";
 
-  addingText() {
+  String year = "";
+  String month = "";
+  String day = "";
+
+  void _dateFunctions() {
     setState(() {
-      allQoutes.add(
-        Quote(title: titleController.text, author: authorController.text),
-      );
+      final months = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+      ];
+      DateTime now = DateTime.now();
+      year = now.year.toString();
+      month = months[now.month - 1];
+      day = now.day.toString();
+      hour = now.hour.toString();
+      minute = now.minute.toString();
+      switch (now.weekday) {
+        case 1:
+          Today = "Monday";
+          break;
+        case 2:
+          Today = "Tuesday";
+          break;
+        case 3:
+          Today = "Wednesday";
+          break;
+        case 4:
+          Today = "Thursday";
+          break;
+        case 5:
+          Today = "Friday";
+          break;
+        case 6:
+          Today = "Saturday";
+          break;
+        case 7:
+          Today = "Sunday";
+          break;
+      }
     });
-    titleController.clear();
-    authorController.clear();
   }
 
-  delete(Quote item) {
-    setState(() {
-      allQoutes.remove(item);
-    });
+  @override
+  void initState() {
+    super.initState();
+    _dateFunctions();
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(useMaterial3: true),
       home: Scaffold(
-        backgroundColor: Colors.grey[600],
         appBar: AppBar(
           backgroundColor: Colors.black,
-          title: const Text(
-            "Qoutes",
-            style: TextStyle(color: Colors.blue, fontFamily: "Bassem"),
+          title: Text(
+            "Time & Date",
+            style: TextStyle(color: Colors.white, fontFamily: "Bassem"),
           ),
           centerTitle: true,
         ),
-        body: Column(
-          children: [
-            ...allQoutes.map(
-              (item) => CardWidget(
-                item: item,
-                title: item.title,
-                author: item.author,
-                delete: (qouteToWithdrawn) {
-                  setState(() {
-                    allQoutes.remove(item);
-                  });
-                },
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Today is $Today", style: TextStyle(fontSize: 30)),
+              SizedBox(height: 20),
+              Text(
+                "Current time: ${hour.padLeft(2, '0')}:${minute.padLeft(2, '0')}",
+                style: TextStyle(fontSize: 20),
               ),
-            ),
-          ],
-        ),
-        floatingActionButton: Builder(
-          builder: (BuildContext contextOfButton) {
-            return FloatingActionButton(
-              onPressed: () {
-                showDialog(
-                  context: contextOfButton,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text("Add Quote"),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextField(
-                            controller: titleController,
-                            decoration: const InputDecoration(
-                              hintText: "Quote",
-                            ),
-                          ),
-                          TextField(
-                            controller: authorController,
-                            decoration: const InputDecoration(
-                              hintText: "Author",
-                            ),
-                          ),
-                        ],
-                      ),
-                      actions: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                addingText();
-                                Navigator.pop(context);
-                              },
-                              child: const Text("Add"),
-                            ),
-
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text("Cancel"),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              backgroundColor: Colors.black,
-              child: const Icon(Icons.add, color: Colors.blue),
-            );
-          },
+              SizedBox(height: 20),
+              Text(
+                "Current date: $year-$month-$day",
+                style: TextStyle(fontSize: 20),
+              ),
+            ],
+          ),
         ),
       ),
     );
