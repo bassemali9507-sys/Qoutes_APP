@@ -12,11 +12,12 @@ class Timer extends StatefulWidget {
 }
 
 class _TimerState extends State<Timer> {
+  //The Day of the week
   String Today = "";
-
+  //The Hour and Minute
   String hour = "";
   String minute = "";
-
+  //The Year, Month and Day
   String year = "";
   String month = "";
   String day = "";
@@ -80,6 +81,7 @@ class _TimerState extends State<Timer> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Colors.grey[400],
         appBar: AppBar(
           backgroundColor: Colors.black,
           title: Text(
